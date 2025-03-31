@@ -18,99 +18,88 @@ class TrafficSignClassifier:
         
         self.root = tk.Tk()
         self.root.title("Traffic Sign Classifier")
-        self.root.geometry("1200x700")
-        self.root.configure(bg='#f0f0f0')
+        self.root.geometry("1000x600")
+        self.root.configure(bg='#e3f2fd')
         
         # Configure style
         self.style = ttk.Style()
-        self.style.configure('Modern.TFrame', background='#f0f0f0')
+        self.style.configure('Modern.TFrame', background='#e3f2fd')
         self.style.configure('Modern.TButton',
-                           font=('Helvetica', 12),
-                           padding=10,
-                           background='#2196F3')
+                             font=('Verdana', 12),
+                             padding=8,
+                             background='#42a5f5')
         self.style.configure('Title.TLabel',
-                           font=('Helvetica', 24, 'bold'),
-                           background='#f0f0f0',
-                           foreground='#1976D2')
+                             font=('Verdana', 22, 'bold'),
+                             background='#e3f2fd',
+                             foreground='#0d47a1')
         self.style.configure('Info.TLabel',
-                           font=('Helvetica', 12),
-                           background='#ffffff',
-                           padding=5)
+                             font=('Verdana', 12),
+                             background='#ffffff',
+                             padding=5)
         
         # Main container
         self.main_container = ttk.Frame(self.root, style='Modern.TFrame')
-        self.main_container.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        self.main_container.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
         
-        # Title
-        title_frame = ttk.Frame(self.main_container, style='Modern.TFrame')
-        title_frame.pack(fill=tk.X, pady=(0, 20))
-        ttk.Label(title_frame,
-                 text="Traffic Sign Recognition",
-                 style='Title.TLabel').pack()
+        # Sidebar for buttons
+        self.sidebar = ttk.Frame(self.main_container, style='Modern.TFrame')
+        self.sidebar.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=10)
         
-        # Content container with shadow effect
+        self.upload_btn = ttk.Button(self.sidebar,
+                                     text="Select Image",
+                                     command=self.load_image,
+                                     style='Modern.TButton')
+        self.upload_btn.pack(pady=20)
+        
+        # Content container
         self.content_frame = tk.Frame(self.main_container,
-                                    bg='#ffffff',
-                                    relief='solid',
-                                    borderwidth=1)
-        self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+                                      bg='#ffffff',
+                                      relief='solid',
+                                      borderwidth=1)
+        self.content_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        # Left panel (Image display)
-        self.left_panel = ttk.Frame(self.content_frame, style='Modern.TFrame')
-        self.left_panel.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=20, pady=20)
-        
-        # Image placeholder
-        self.image_frame = tk.Frame(self.left_panel, bg='#f5f5f5')
+        # Image display
+        self.image_frame = tk.Frame(self.content_frame, bg='#f1f8e9')
         self.image_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         self.image_display = ttk.Label(self.image_frame)
-        self.image_display.pack(pady=20)
-        
-        self.upload_btn = ttk.Button(self.left_panel,
-                                   text="Select Image",
-                                   command=self.load_image,
-                                   style='Modern.TButton')
-        self.upload_btn.pack(pady=20)
-        
-        # Right panel (Results)
-        self.right_panel = ttk.Frame(self.content_frame, style='Modern.TFrame')
-        self.right_panel.pack(side=tk.RIGHT, fill=tk.BOTH, padx=20, pady=20)
+        self.image_display.pack(pady=15)
         
         # Results container
-        self.result_container = tk.Frame(self.right_panel,
-                                       bg='#ffffff',
-                                       relief='solid',
-                                       borderwidth=1)
+        self.result_container = tk.Frame(self.content_frame,
+                                         bg='#ffffff',
+                                         relief='solid',
+                                         borderwidth=1)
         self.result_container.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         ttk.Label(self.result_container,
-                 text="Recognition Results",
-                 style='Title.TLabel',
-                 font=('Helvetica', 18, 'bold')).pack(pady=20)
+                  text="Recognition Results",
+                  style='Title.TLabel',
+                  font=('Verdana', 18, 'bold')).pack(pady=15)
         
         # Results info with modern styling
         self.category_info = ttk.Label(self.result_container,
-                                     text="Category: Waiting for image...",
-                                     style='Info.TLabel')
+                                       text="Category: Waiting for image...",
+                                       style='Info.TLabel')
         self.category_info.pack(pady=10, padx=20, fill=tk.X)
         
         self.sign_info = ttk.Label(self.result_container,
-                                  text="Sign: Waiting for image...",
-                                  style='Info.TLabel')
+                                   text="Sign: Waiting for image...",
+                                   style='Info.TLabel')
         self.sign_info.pack(pady=10, padx=20, fill=tk.X)
         
         self.confidence_frame = tk.Frame(self.result_container, bg='#ffffff')
         self.confidence_frame.pack(pady=10, padx=20, fill=tk.X)
         
         self.confidence_info = ttk.Label(self.confidence_frame,
-                                       text="Confidence: 0%",
-                                       style='Info.TLabel')
+                                         text="Confidence: 0%",
+                                         style='Info.TLabel')
         self.confidence_info.pack(side=tk.LEFT)
         
         # Progress bar for confidence
         self.confidence_bar = ttk.Progressbar(self.confidence_frame,
-                                            length=200,
-                                            mode='determinate')
+                                              length=200,
+                                              mode='determinate')
         self.confidence_bar.pack(side=tk.RIGHT, padx=10)
     
     def classify_sign(self, img_path):
@@ -207,7 +196,7 @@ class TrafficSignClassifier:
                 # Load and display image
                 img = Image.open(path)
                 # Calculate aspect ratio for resizing
-                display_size = (350, 350)
+                display_size = (300, 300)
                 img.thumbnail(display_size, Image.Resampling.LANCZOS)
                 img_display = ImageTk.PhotoImage(img)
                 self.image_display.config(image=img_display)
